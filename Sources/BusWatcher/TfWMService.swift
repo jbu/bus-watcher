@@ -35,8 +35,8 @@ struct TfWMService: Sendable {
         ]
         guard let url = comps.url,
               let (data, _) = try? await session.data(from: url),
-              let arrivals = try? JSONDecoder().decode([Arrival].self, from: data)
+              let wrapper = try? JSONDecoder().decode(ArrivalResponse.self, from: data)
         else { return [] }
-        return arrivals
+        return wrapper.arrayOfPrediction.prediction
     }
 }

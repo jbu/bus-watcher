@@ -17,7 +17,16 @@ let watchedStops: [StopConfig] = [
                routeLabel: "11C", stopName: "Vicarage Rd"),
 ]
 
-struct Arrival: Codable, Identifiable, Sendable {
+struct ArrivalResponse: Decodable {
+    struct Inner: Decodable {
+        let prediction: [Arrival]
+        enum CodingKeys: String, CodingKey { case prediction = "Prediction" }
+    }
+    let arrayOfPrediction: Inner
+    enum CodingKeys: String, CodingKey { case arrayOfPrediction = "ArrayOfPrediction" }
+}
+
+struct Arrival: Decodable, Identifiable, Sendable {
     let id: String
     let lineName: String?
     let destinationName: String?
@@ -25,4 +34,22 @@ struct Arrival: Codable, Identifiable, Sendable {
     let expectedArrival: String
 
     var minutesAway: Int { max(0, timeToStation / 60) }
+
+    enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case lineName = "LineName"
+        case destinationName = "DestinationName"
+        case timeToStation = "TimeToStation"
+        case expectedArrival = "ExpectedArrival"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        lineName = try c.decodeIfPresent(String.self, forKey: .lineName)
+        destinationName = try c.decodeIfPresent(String.self, forKey: .destinationName)
+        expectedArrival = (try? c.decode(String.self, forKey: .expectedArrival)) ?? ""
+        let ttsString = (try? c.decode(String.self, forKey: .timeToStation)) ?? ""
+        timeToStation = Int(ttsString) ?? 0
+    }
 }

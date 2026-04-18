@@ -1,6 +1,8 @@
 Sources/BusWatcher/Secrets.swift
+Sources/BusWatcher/Info.plist
 .DS_Store
 .build/
 *.xcuserdata/
 DerivedData/
 *.xcworkspace/xcuserdata/
+BusWatcher.xcodeproj/
