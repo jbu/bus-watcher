@@ -41,10 +41,11 @@ struct StopCardView: View {
 
     private var routeColor: Color {
         switch stop.routeLabel {
-        case "11A": return .blue
-        case "35":  return .green
-        case "11C": return .orange
-        default:    return .gray
+        case "11A":   return .blue
+        case "35":    return .green
+        case "11C":   return .orange
+        case "23/24": return .purple
+        default:      return .gray
         }
     }
 }
@@ -67,7 +68,7 @@ struct ArrivalRowView: View {
 
     private var arrivalTimeString: String {
         let iso = ISO8601DateFormatter()
-        guard let date = iso.date(from: arrival.expectedArrival) else { return "—" }
+        guard let date = iso.date(from: arrival.displayArrival) else { return "—" }
         let fmt = DateFormatter()
         fmt.dateFormat = "HH:mm"
         return fmt.string(from: date)
@@ -77,7 +78,7 @@ struct ArrivalRowView: View {
         HStack {
             Text(arrivalTimeString)
                 .font(.body.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(arrival.isLive ? .secondary : .tertiary)
                 .frame(width: 48, alignment: .leading)
 
             if let dest = arrival.destinationName, !dest.isEmpty {
@@ -90,7 +91,7 @@ struct ArrivalRowView: View {
 
             Text(timeLabel)
                 .font(.body.bold())
-                .foregroundStyle(countdownColor)
+                .foregroundStyle(arrival.isLive ? countdownColor : .secondary)
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
