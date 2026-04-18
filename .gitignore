@@ -9,3 +9,6 @@ BusWatcherWidgets.entitlements
 DerivedData/
 *.xcworkspace/xcuserdata/
 BusWatcher.xcodeproj/
+build/
+data/
+.swiftpm/
