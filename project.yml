@@ -13,7 +13,8 @@ targets:
       - path: Sources/Shared
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.buswatcher.app
+        PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher
+        DEVELOPMENT_TEAM: JX8T6TSAWW
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -25,7 +26,7 @@ targets:
       path: BusWatcher.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.buswatcher.app
+          - group.uk.uther.apps.buswatcher
     info:
       path: Sources/BusWatcher/Info.plist
       properties:
@@ -57,13 +58,13 @@ targets:
       - path: Sources/Shared
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.buswatcher.app.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher.widgets
         SWIFT_VERSION: "5.9"
     entitlements:
       path: BusWatcherWidgets.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.com.buswatcher.app
+          - group.uk.uther.apps.buswatcher
     info:
       path: Sources/BusWatcherWidgets/Info.plist
       properties:

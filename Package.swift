@@ -8,8 +8,8 @@ let package = Package(
         .iOSApplication(
             name: "BusWatcher",
             targets: ["BusWatcher"],
-            bundleIdentifier: "com.buswatcher.app",
-            teamIdentifier: "",
+            bundleIdentifier: "uk.uther.apps.buswatcher",
+            teamIdentifier: "JX8T6TSAWW",
             displayVersion: "1.0",
             bundleVersion: "1",
             supportedDeviceFamilies: [.pad, .phone],
