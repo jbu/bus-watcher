@@ -28,7 +28,7 @@ Install and run on a booted simulator, then take a screenshot to inspect the UI:
 ```sh
 xcrun simctl boot "iPhone 17" 2>/dev/null || true
 xcrun simctl install "iPhone 17" build/Debug-iphonesimulator/BusWatcher.app
-xcrun simctl launch --terminate-running-process "iPhone 17" com.buswatcher.app
+xcrun simctl launch --terminate-running-process "iPhone 17" uk.uther.apps.buswatcher
 sleep 6
 xcrun simctl io "iPhone 17" screenshot /tmp/buswatcher.png
 ```
@@ -37,7 +37,7 @@ To test the Live Activity / geofence trigger:
 
 ```sh
 # Grant Always location permission
-xcrun simctl privacy "iPhone 17" grant location com.buswatcher.app
+xcrun simctl privacy "iPhone 17" grant location uk.uther.apps.buswatcher
 # Simulate device at St Mary's Rd stop
 xcrun simctl location "iPhone 17" set 52.455677,-1.954242
 # Background the app to see the Dynamic Island
