@@ -59,6 +59,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher.widgets
+        DEVELOPMENT_TEAM: JX8T6TSAWW
         SWIFT_VERSION: "5.9"
     entitlements:
       path: BusWatcherWidgets.entitlements
