@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import ActivityKit
 
 @Observable
 @MainActor
@@ -8,6 +9,7 @@ final class BusViewModel {
     var lastUpdated: Date?
 
     private let service = TfWMService()
+    private var currentActivity: Activity<BusActivityAttributes>?
 
     func refresh() async {
         let stops = watchedStops
@@ -21,10 +23,47 @@ final class BusViewModel {
         arrivals[stops[2].id] = rc
         lastUpdated = Date()
     }
+
+    func startLiveActivity(for stop: StopConfig) async {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        await endLiveActivity()
+        await refresh()
+        let state = makeState(for: stop)
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
+        currentActivity = try? Activity.request(
+            attributes: BusActivityAttributes(stopId: stop.id),
+            content: content
+        )
+    }
+
+    func updateLiveActivity(nearbyStop: StopConfig?) async {
+        guard let stop = nearbyStop, let activity = currentActivity else { return }
+        let state = makeState(for: stop)
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
+        await activity.update(content)
+    }
+
+    func endLiveActivity() async {
+        await currentActivity?.end(nil, dismissalPolicy: .immediate)
+        currentActivity = nil
+    }
+
+    private func makeState(for stop: StopConfig) -> BusActivityAttributes.ContentState {
+        let liveArrivals = (arrivals[stop.id] ?? []).prefix(3).map {
+            LiveArrival(minutesAway: $0.minutesAway, destination: $0.destinationName ?? "")
+        }
+        return BusActivityAttributes.ContentState(
+            stopName: stop.stopName,
+            routeLabel: stop.routeLabel,
+            arrivals: Array(liveArrivals),
+            updatedAt: Date()
+        )
+    }
 }
 
 struct ContentView: View {
     @State private var vm = BusViewModel()
+    @Environment(LocationManager.self) private var locationManager
 
     var body: some View {
         NavigationStack {
@@ -51,10 +90,23 @@ struct ContentView: View {
             }
         }
         .task {
+            locationManager.setup()
             await vm.refresh()
         }
         .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
-            Task { await vm.refresh() }
+            Task {
+                await vm.refresh()
+                await vm.updateLiveActivity(nearbyStop: locationManager.nearbyStop)
+            }
+        }
+        .onChange(of: locationManager.nearbyStop?.id) { _, newStopId in
+            Task {
+                if let stop = watchedStops.first(where: { $0.id == newStopId }) {
+                    await vm.startLiveActivity(for: stop)
+                } else {
+                    await vm.endLiveActivity()
+                }
+            }
         }
     }
 }

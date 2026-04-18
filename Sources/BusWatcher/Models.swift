@@ -6,15 +6,20 @@ struct StopConfig: Identifiable {
     let stopId: String
     let routeLabel: String
     let stopName: String
+    let latitude: Double
+    let longitude: Double
 }
 
 let watchedStops: [StopConfig] = [
     StopConfig(id: "11a", lineIds: ["1144", "179"], stopId: "nwmapwdt",
-               routeLabel: "11A", stopName: "St Mary's Rd"),
+               routeLabel: "11A", stopName: "St Mary's Rd",
+               latitude: 52.455677, longitude: -1.954242),
     StopConfig(id: "35",  lineIds: ["216", "1148"], stopId: "nwmajadp",
-               routeLabel: "35",  stopName: "Station St"),
+               routeLabel: "35",  stopName: "Station St",
+               latitude: 52.476753, longitude: -1.898996),
     StopConfig(id: "11c", lineIds: ["1090"],        stopId: "nwmdadwt",
-               routeLabel: "11C", stopName: "Vicarage Rd"),
+               routeLabel: "11C", stopName: "Vicarage Rd",
+               latitude: 52.429565, longitude: -1.900940),
 ]
 
 struct ArrivalResponse: Decodable {
