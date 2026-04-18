@@ -18,8 +18,8 @@ struct TfWMService: Sendable {
         }
         var seen = Set<String>()
         return all
-            .filter { seen.insert($0.id).inserted && $0.timeToStation >= -60 }
-            .sorted { $0.timeToStation < $1.timeToStation }
+            .filter { seen.insert($0.id).inserted && $0.minutesAway >= 0 }
+            .sorted { $0.minutesAway < $1.minutesAway }
             .prefix(5)
             .map { $0 }
     }

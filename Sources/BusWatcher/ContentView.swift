@@ -14,13 +14,14 @@ final class BusViewModel {
     func refresh() async {
         let stops = watchedStops
         let svc = service
-        async let a = svc.fetchArrivals(for: stops[0])
-        async let b = svc.fetchArrivals(for: stops[1])
-        async let c = svc.fetchArrivals(for: stops[2])
-        let (ra, rb, rc) = await (a, b, c)
-        arrivals[stops[0].id] = ra
-        arrivals[stops[1].id] = rb
-        arrivals[stops[2].id] = rc
+        await withTaskGroup(of: (String, [Arrival]).self) { group in
+            for stop in stops {
+                group.addTask { (stop.id, await svc.fetchArrivals(for: stop)) }
+            }
+            for await (id, result) in group {
+                arrivals[id] = result
+            }
+        }
         lastUpdated = Date()
     }
 
