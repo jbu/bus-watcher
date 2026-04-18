@@ -16,9 +16,27 @@ struct TfWMService: Sendable {
                 all += batch
             }
         }
-        var seen = Set<String>()
-        return all
-            .filter { seen.insert($0.id).inserted && $0.minutesAway >= 0 }
+        // Deduplicate by ScheduledArrival (API returns a live + a scheduled entry per trip).
+        // Normalise to UTC epoch seconds so "19:07:48Z" and "19:07:48+01:00" match.
+        // Prefer live entry when both exist.
+        let iso = ISO8601DateFormatter()
+        func schedKey(_ a: Arrival) -> String {
+            if let date = iso.date(from: a.scheduledArrival) {
+                return String(Int(date.timeIntervalSince1970))
+            }
+            return a.id
+        }
+        var byScheduled: [String: Arrival] = [:]
+        for arrival in all {
+            let key = schedKey(arrival)
+            if let existing = byScheduled[key] {
+                if arrival.isLive && !existing.isLive { byScheduled[key] = arrival }
+            } else {
+                byScheduled[key] = arrival
+            }
+        }
+        return byScheduled.values
+            .filter { $0.minutesAway >= 0 }
             .sorted { $0.minutesAway < $1.minutesAway }
             .prefix(5)
             .map { $0 }
