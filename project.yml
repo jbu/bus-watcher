@@ -14,7 +14,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher
-        DEVELOPMENT_TEAM: JX8T6TSAWW
+        DEVELOPMENT_TEAM: DDG7JRXJYT
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -59,7 +59,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher.widgets
-        DEVELOPMENT_TEAM: JX8T6TSAWW
+        DEVELOPMENT_TEAM: DDG7JRXJYT
         SWIFT_VERSION: "6.0"
     entitlements:
       path: BusWatcherWidgets.entitlements

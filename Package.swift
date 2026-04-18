@@ -9,7 +9,7 @@ let package = Package(
             name: "BusWatcher",
             targets: ["BusWatcher"],
             bundleIdentifier: "uk.uther.apps.buswatcher",
-            teamIdentifier: "JX8T6TSAWW",
+            teamIdentifier: "DDG7JRXJYT",
             displayVersion: "1.0",
             bundleVersion: "1",
             supportedDeviceFamilies: [.pad, .phone],
