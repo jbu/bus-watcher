@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "BusWatcher",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v26)],
     products: [
         .iOSApplication(
             name: "BusWatcher",

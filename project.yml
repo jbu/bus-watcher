@@ -1,13 +1,13 @@
 name: BusWatcher
 options:
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "26.0"
 
 targets:
   BusWatcher:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "26.0"
     sources:
       - path: Sources/BusWatcher
       - path: Sources/Shared
@@ -52,7 +52,7 @@ targets:
   BusWatcherWidgets:
     type: app-extension
     platform: iOS
-    deploymentTarget: "16.2"
+    deploymentTarget: "26.0"
     sources:
       - path: Sources/BusWatcherWidgets
       - path: Sources/Shared
