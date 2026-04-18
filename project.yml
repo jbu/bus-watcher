@@ -18,7 +18,7 @@ targets:
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         TARGETED_DEVICE_FAMILY: "1,2"
-        SWIFT_VERSION: "5.9"
+        SWIFT_VERSION: "6.0"
     dependencies:
       - target: BusWatcherWidgets
         embed: true
@@ -60,7 +60,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher.widgets
         DEVELOPMENT_TEAM: JX8T6TSAWW
-        SWIFT_VERSION: "5.9"
+        SWIFT_VERSION: "6.0"
     entitlements:
       path: BusWatcherWidgets.entitlements
       properties:

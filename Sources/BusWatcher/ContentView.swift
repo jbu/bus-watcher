@@ -1,6 +1,6 @@
 import SwiftUI
 import Combine
-import ActivityKit
+@preconcurrency import ActivityKit
 
 @Observable
 @MainActor

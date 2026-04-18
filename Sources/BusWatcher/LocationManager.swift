@@ -49,11 +49,12 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        let stop = watchedStops.first { $0.id == region.identifier }
+        let identifier = region.identifier
+        let stop = watchedStops.first { $0.id == identifier }
         Task { @MainActor in
             if state == .inside {
                 self.nearbyStop = stop
-            } else if self.nearbyStop?.id == region.identifier {
+            } else if self.nearbyStop?.id == identifier {
                 self.nearbyStop = nil
             }
         }
@@ -65,8 +66,9 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        let identifier = region.identifier
         Task { @MainActor in
-            if self.nearbyStop?.id == region.identifier { self.nearbyStop = nil }
+            if self.nearbyStop?.id == identifier { self.nearbyStop = nil }
         }
     }
 }
