@@ -74,5 +74,6 @@ targets:
     info:
       path: Sources/BusWatcherWidgets/Info.plist
       properties:
+        CFBundleDisplayName: BusWatcher Widgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
