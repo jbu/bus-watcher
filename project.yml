@@ -61,6 +61,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: uk.uther.apps.buswatcher.widgets
         DEVELOPMENT_TEAM: DDG7JRXJYT
         SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        PROVISIONING_PROFILE_SPECIFIER: ""
     entitlements:
       path: BusWatcherWidgets.entitlements
       properties:
