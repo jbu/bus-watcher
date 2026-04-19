@@ -8,7 +8,6 @@ BusWatcherWidgets.entitlements
 *.xcuserdata/
 DerivedData/
 *.xcworkspace/xcuserdata/
-BusWatcher.xcodeproj/
 build/
 data/
 .swiftpm/
