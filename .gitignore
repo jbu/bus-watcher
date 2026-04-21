@@ -1,8 +1,6 @@
 Sources/BusWatcher/Secrets.swift
 Sources/BusWatcher/Info.plist
 Sources/BusWatcherWidgets/Info.plist
-BusWatcher.entitlements
-BusWatcherWidgets.entitlements
 .DS_Store
 .build/
 *.xcuserdata/
