@@ -2,6 +2,16 @@ name: BusWatcher
 options:
   deploymentTarget:
     iOS: "26.0"
+  createSchemes: false
+
+schemes:
+  BusWatcher:
+    build:
+      targets:
+        BusWatcher: all
+      parallelizeBuild: true
+    archive:
+      config: Release
 
 targets:
   BusWatcher:
