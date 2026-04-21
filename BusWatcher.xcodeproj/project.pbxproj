@@ -19,6 +19,7 @@
 		D4D859760B077E8FBCCAFA67 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FAAFB450D9F31DDDA71218 /* LocationManager.swift */; };
 		E0962618756AB7A4989C61B7 /* BusActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A9B6B6C42B89932E95E3FC /* BusActivityAttributes.swift */; };
 		E664B4CE2E79F0DE6FC0D62B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C282FB3FC17DE607B5AD8B7 /* Models.swift */; };
+		F38DC7BBAE42646CFDE8D5E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78442C55C2202986ACAA86B5 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +50,8 @@
 		2D95DE08B0B361DFBCD39A7A /* BusWatcherWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusWatcherWidgetsBundle.swift; sourceTree = "<group>"; };
 		3C282FB3FC17DE607B5AD8B7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		5247F00295C510501219B1C0 /* BusWatcherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusWatcherApp.swift; sourceTree = "<group>"; };
-		678422EE1BF4DCFD52CF83D5 /* BusWatcherWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BusWatcherWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		678422EE1BF4DCFD52CF83D5 /* BusWatcherWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BusWatcherWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		78442C55C2202986ACAA86B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8FC5FB59EFE0AFD51A105126 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		907612B2DBF42C9EA5FBDF5C /* BusLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusLiveActivityWidget.swift; sourceTree = "<group>"; };
 		95B8335DE9DE67E8A40CC904 /* TfWMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TfWMService.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 		F2A6CD6B83A59CBC39217576 /* BusWatcher */ = {
 			isa = PBXGroup;
 			children = (
+				78442C55C2202986ACAA86B5 /* Assets.xcassets */,
 				5247F00295C510501219B1C0 /* BusWatcherApp.swift */,
 				F0CFEA19C48B2183EAFF3743 /* ContentView.swift */,
 				FB98285F4FD8B8601B925BBF /* Info.plist */,
@@ -126,6 +129,7 @@
 			buildConfigurationList = FC6FBF9ACE6E961FCAB1BC90 /* Build configuration list for PBXNativeTarget "BusWatcher" */;
 			buildPhases = (
 				EC92C91DDC0FC1F2207FAE9E /* Sources */,
+				DDE984A35A25508543E498E2 /* Resources */,
 				8DEE880EF21B799CEB874B6C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -169,6 +173,10 @@
 					B052F6EE603E9FAFCA53094E = {
 						DevelopmentTeam = DDG7JRXJYT;
 					};
+					B9F7361A90CA83E9D17A5E7B = {
+						DevelopmentTeam = DDG7JRXJYT;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = E07F1AA75CD291FD9B07B6F0 /* Build configuration list for PBXProject "BusWatcher" */;
@@ -190,6 +198,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DDE984A35A25508543E498E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F38DC7BBAE42646CFDE8D5E1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7ED22AF86FD23821E635C8A6 /* Sources */ = {
@@ -254,7 +273,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BusWatcherWidgets.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DDG7JRXJYT;
 				INFOPLIST_FILE = Sources/BusWatcherWidgets/Info.plist;
@@ -354,7 +372,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = BusWatcherWidgets.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DDG7JRXJYT;
 				INFOPLIST_FILE = Sources/BusWatcherWidgets/Info.plist;
