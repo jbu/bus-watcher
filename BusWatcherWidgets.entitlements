@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.uk.uther.apps.buswatcher</string>
+		<string>group.uk.uther.apps.ios.buswatcher</string>
 	</array>
 </dict>
 </plist>
