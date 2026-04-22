@@ -1,5 +1,6 @@
 import XCTest
 
+@MainActor
 final class EditFlowUITests: XCTestCase {
     override func setUp() {
         continueAfterFailure = false

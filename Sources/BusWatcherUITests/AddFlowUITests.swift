@@ -8,6 +8,7 @@ import XCTest
 /// TODO: to extend to end-to-end, introduce a protocol-backed TfWMService and swap in a fixture
 /// implementation when `-uiTesting` is present, then drive the full add flow including the
 /// Configure screen (which fetches stop detail).
+@MainActor
 final class AddFlowUITests: XCTestCase {
     override func setUp() {
         continueAfterFailure = false
