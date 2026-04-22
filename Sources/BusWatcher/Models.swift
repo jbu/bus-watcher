@@ -1,9 +1,8 @@
 import Foundation
-import SwiftUI
 
 nonisolated(unsafe) let isoFormatter = ISO8601DateFormatter()
 
-struct StopConfig: Identifiable {
+struct StopConfig: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let lineIds: [String]
     let stopId: String
@@ -11,26 +10,8 @@ struct StopConfig: Identifiable {
     let stopName: String
     let latitude: Double
     let longitude: Double
-    let color: Color
+    let colorToken: StopColor
 }
-
-let watchedStops: [StopConfig] = [
-    StopConfig(id: "11a", lineIds: ["1144", "179"], stopId: "43000320602",
-               routeLabel: "11A", stopName: "St Mary's Rd",
-               latitude: 52.455677, longitude: -1.954242, color: .blue),
-    StopConfig(id: "35",  lineIds: ["216", "1148"], stopId: "43000202601",
-               routeLabel: "35",  stopName: "Station St",
-               latitude: 52.476753, longitude: -1.898996, color: .green),
-    StopConfig(id: "11c", lineIds: ["1090"],        stopId: "43000412702",
-               routeLabel: "11C", stopName: "Vicarage Rd",
-               latitude: 52.429565, longitude: -1.900940, color: .orange),
-    StopConfig(id: "23_24", lineIds: ["150", "151"], stopId: "43000320101",
-               routeLabel: "23/24", stopName: "York St",
-               latitude: 52.459450, longitude: -1.947204, color: .purple),
-]
-
-let watchedStopById: [String: StopConfig] =
-    Dictionary(uniqueKeysWithValues: watchedStops.map { ($0.id, $0) })
 
 struct ArrivalResponse: Decodable {
     struct Inner: Decodable {

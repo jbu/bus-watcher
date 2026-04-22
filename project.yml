@@ -9,7 +9,13 @@ schemes:
     build:
       targets:
         BusWatcher: all
+        BusWatcherTests: [test]
+        BusWatcherUITests: [test]
       parallelizeBuild: true
+    test:
+      targets:
+        - BusWatcherTests
+        - BusWatcherUITests
     archive:
       config: Release
 
@@ -90,3 +96,32 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  BusWatcherTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Sources/BusWatcherTests
+    dependencies:
+      - target: BusWatcher
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+
+  BusWatcherUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: Sources/BusWatcherUITests
+    dependencies:
+      - target: BusWatcher
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: BusWatcher

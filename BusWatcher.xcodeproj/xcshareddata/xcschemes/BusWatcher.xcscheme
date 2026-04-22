@@ -21,6 +21,34 @@
                ReferencedContainer = "container:BusWatcher.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7B311A333101B585E7928397"
+               BuildableName = "BusWatcherTests.xctest"
+               BlueprintName = "BusWatcherTests"
+               ReferencedContainer = "container:BusWatcher.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C7544B66114D4A78704BC8D9"
+               BuildableName = "BusWatcherUITests.xctest"
+               BlueprintName = "BusWatcherUITests"
+               ReferencedContainer = "container:BusWatcher.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -39,7 +67,31 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7B311A333101B585E7928397"
+               BuildableName = "BusWatcherTests.xctest"
+               BlueprintName = "BusWatcherTests"
+               ReferencedContainer = "container:BusWatcher.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C7544B66114D4A78704BC8D9"
+               BuildableName = "BusWatcherUITests.xctest"
+               BlueprintName = "BusWatcherUITests"
+               ReferencedContainer = "container:BusWatcher.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

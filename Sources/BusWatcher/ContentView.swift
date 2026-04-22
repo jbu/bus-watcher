@@ -15,7 +15,7 @@ final class BusViewModel {
         if let stored = UserDefaults.standard.stringArray(forKey: "starredStops") {
             return Set(stored)
         }
-        return Set(watchedStops.map(\.id))
+        return Set(StopStore.defaultStops.map(\.id))
     }() {
         didSet { UserDefaults.standard.set(Array(starredStopIds), forKey: "starredStops") }
     }
@@ -28,12 +28,12 @@ final class BusViewModel {
         }
     }
 
-    func refresh() async {
+    func refresh(stops: [StopConfig]) async {
         guard !isRefreshing else { return }
         isRefreshing = true
         defer { isRefreshing = false }
         await withTaskGroup(of: (String, [Arrival]).self) { group in
-            for stop in watchedStops {
+            for stop in stops {
                 group.addTask { (stop.id, await self.service.fetchArrivals(for: stop)) }
             }
             for await (id, result) in group {
@@ -82,24 +82,38 @@ final class BusViewModel {
 struct ContentView: View {
     @State private var vm = BusViewModel()
     @Environment(LocationManager.self) private var locationManager
+    @Environment(StopStore.self) private var store
+    @State private var showingEditor = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Bus Watcher")
-                            .font(.largeTitle)
-                            .bold()
-                        if let updated = vm.lastUpdated {
-                            Text("Updated \(updated, style: .time)")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Bus Watcher")
+                                .font(.largeTitle)
+                                .bold()
+                            if let updated = vm.lastUpdated {
+                                Text("Updated \(updated, style: .time)")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
+                        Spacer()
+                        Button {
+                            showingEditor = true
+                        } label: {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.title2)
+                                .foregroundStyle(.primary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("editStopsButton")
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    ForEach(watchedStops) { stop in
+                    ForEach(store.stops) { stop in
                         StopCardView(
                             stop: stop,
                             arrivals: vm.arrivals[stop.id] ?? [],
@@ -112,17 +126,26 @@ struct ContentView: View {
             }
             .toolbarVisibility(.hidden, for: .navigationBar)
         }
+        .sheet(isPresented: $showingEditor) {
+            StopEditorSheet()
+                .environment(store)
+                .environment(locationManager)
+        }
         .task {
             locationManager.setup()
+            locationManager.syncRegions(with: store.stops)
             while !Task.isCancelled {
-                await vm.refresh()
+                await vm.refresh(stops: store.stops)
                 await vm.updateLiveActivity(nearbyStop: locationManager.nearbyStop)
                 try? await Task.sleep(for: .seconds(30))
             }
         }
+        .onChange(of: store.stops.map(\.id)) { _, _ in
+            locationManager.syncRegions(with: store.stops)
+        }
         .onChange(of: locationManager.nearbyStop?.id) { _, newStopId in
             Task {
-                if let stopId = newStopId, let stop = watchedStopById[stopId],
+                if let stopId = newStopId, let stop = store.stopById(stopId),
                    vm.starredStopIds.contains(stopId) {
                     await vm.startLiveActivity(for: stop)
                 } else {

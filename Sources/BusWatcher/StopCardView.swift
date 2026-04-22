@@ -14,7 +14,7 @@ struct StopCardView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(stop.color, in: RoundedRectangle(cornerRadius: 8))
+                    .background(stop.colorToken.color, in: RoundedRectangle(cornerRadius: 8))
                 Text(stop.stopName)
                     .font(.headline)
                 Spacer()
