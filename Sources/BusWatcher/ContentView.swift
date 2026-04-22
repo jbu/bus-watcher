@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 @preconcurrency import ActivityKit
 
 @Observable
@@ -10,13 +9,32 @@ final class BusViewModel {
 
     private let service = TfWMService()
     private var currentActivity: Activity<BusActivityAttributes>?
+    private var isRefreshing = false
+
+    var starredStopIds: Set<String> = {
+        if let stored = UserDefaults.standard.stringArray(forKey: "starredStops") {
+            return Set(stored)
+        }
+        return Set(watchedStops.map(\.id))
+    }() {
+        didSet { UserDefaults.standard.set(Array(starredStopIds), forKey: "starredStops") }
+    }
+
+    func toggleStar(for stop: StopConfig) {
+        if starredStopIds.contains(stop.id) {
+            starredStopIds.remove(stop.id)
+        } else {
+            starredStopIds.insert(stop.id)
+        }
+    }
 
     func refresh() async {
-        let stops = watchedStops
-        let svc = service
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
         await withTaskGroup(of: (String, [Arrival]).self) { group in
-            for stop in stops {
-                group.addTask { (stop.id, await svc.fetchArrivals(for: stop)) }
+            for stop in watchedStops {
+                group.addTask { (stop.id, await self.service.fetchArrivals(for: stop)) }
             }
             for await (id, result) in group {
                 arrivals[id] = result
@@ -28,7 +46,6 @@ final class BusViewModel {
     func startLiveActivity(for stop: StopConfig) async {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         await endLiveActivity()
-        await refresh()
         let state = makeState(for: stop)
         let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
         currentActivity = try? Activity.request(
@@ -85,7 +102,9 @@ struct ContentView: View {
                     ForEach(watchedStops) { stop in
                         StopCardView(
                             stop: stop,
-                            arrivals: vm.arrivals[stop.id] ?? []
+                            arrivals: vm.arrivals[stop.id] ?? [],
+                            isStarred: vm.starredStopIds.contains(stop.id),
+                            onToggleStar: { vm.toggleStar(for: stop) }
                         )
                     }
                 }
@@ -95,19 +114,25 @@ struct ContentView: View {
         }
         .task {
             locationManager.setup()
-            await vm.refresh()
-        }
-        .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
-            Task {
+            while !Task.isCancelled {
                 await vm.refresh()
                 await vm.updateLiveActivity(nearbyStop: locationManager.nearbyStop)
+                try? await Task.sleep(for: .seconds(30))
             }
         }
         .onChange(of: locationManager.nearbyStop?.id) { _, newStopId in
             Task {
-                if let stop = watchedStops.first(where: { $0.id == newStopId }) {
+                if let stopId = newStopId, let stop = watchedStopById[stopId],
+                   vm.starredStopIds.contains(stopId) {
                     await vm.startLiveActivity(for: stop)
                 } else {
+                    await vm.endLiveActivity()
+                }
+            }
+        }
+        .onChange(of: vm.starredStopIds) { _, _ in
+            Task {
+                if let stop = locationManager.nearbyStop, !vm.starredStopIds.contains(stop.id) {
                     await vm.endLiveActivity()
                 }
             }

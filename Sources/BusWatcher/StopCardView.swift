@@ -3,6 +3,8 @@ import SwiftUI
 struct StopCardView: View {
     let stop: StopConfig
     let arrivals: [Arrival]
+    let isStarred: Bool
+    let onToggleStar: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -12,10 +14,15 @@ struct StopCardView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(routeColor, in: RoundedRectangle(cornerRadius: 8))
+                    .background(stop.color, in: RoundedRectangle(cornerRadius: 8))
                 Text(stop.stopName)
                     .font(.headline)
                 Spacer()
+                Button(action: onToggleStar) {
+                    Image(systemName: isStarred ? "star.fill" : "star")
+                        .foregroundStyle(isStarred ? .yellow : .secondary)
+                }
+                .buttonStyle(.plain)
             }
             .padding()
 
@@ -26,9 +33,9 @@ struct StopCardView: View {
                     .foregroundStyle(.secondary)
                     .padding()
             } else {
-                ForEach(Array(arrivals.enumerated()), id: \.element.id) { index, arrival in
-                    ArrivalRowView(arrival: arrival)
-                    if index < arrivals.count - 1 {
+                ForEach(arrivals.indices, id: \.self) { i in
+                    ArrivalRowView(arrival: arrivals[i])
+                    if i < arrivals.count - 1 {
                         Divider().padding(.leading)
                     }
                 }
@@ -38,40 +45,20 @@ struct StopCardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.08), radius: 6, y: 2)
     }
-
-    private var routeColor: Color {
-        switch stop.routeLabel {
-        case "11A":   return .blue
-        case "35":    return .green
-        case "11C":   return .orange
-        case "23/24": return .purple
-        default:      return .gray
-        }
-    }
 }
 
 struct ArrivalRowView: View {
     let arrival: Arrival
 
-    private var countdownColor: Color {
-        let mins = arrival.minutesAway
-        if mins <= 1 { return .red }
-        if mins <= 4 { return .orange }
-        return .green
-    }
-
-    private var timeLabel: String {
-        if arrival.timeToStation <= 30 { return "Due" }
-        let mins = arrival.minutesAway
-        return mins == 1 ? "1 min" : "\(mins) mins"
-    }
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm"
+        return f
+    }()
 
     private var arrivalTimeString: String {
-        let iso = ISO8601DateFormatter()
-        guard let date = iso.date(from: arrival.displayArrival) else { return "—" }
-        let fmt = DateFormatter()
-        fmt.dateFormat = "HH:mm"
-        return fmt.string(from: date)
+        guard let date = isoFormatter.date(from: arrival.displayArrival) else { return "—" }
+        return ArrivalRowView.timeFormatter.string(from: date)
     }
 
     var body: some View {
@@ -89,9 +76,9 @@ struct ArrivalRowView: View {
 
             Spacer()
 
-            Text(timeLabel)
+            Text(countdownText(arrival.minutesAway))
                 .font(.body.bold())
-                .foregroundStyle(arrival.isLive ? countdownColor : .secondary)
+                .foregroundStyle(arrival.isLive ? countdownColor(arrival.minutesAway) : .secondary)
         }
         .padding(.horizontal)
         .padding(.vertical, 10)

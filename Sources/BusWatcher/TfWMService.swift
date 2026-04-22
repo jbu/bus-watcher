@@ -8,20 +8,15 @@ struct TfWMService: Sendable {
         var all: [Arrival] = []
         await withTaskGroup(of: [Arrival].self) { group in
             for lineId in stop.lineIds {
-                group.addTask {
-                    await self.fetchSingleLine(lineId: lineId, stopId: stop.stopId)
-                }
+                group.addTask { await self.fetchSingleLine(lineId: lineId, stopId: stop.stopId) }
             }
-            for await batch in group {
-                all += batch
-            }
+            for await batch in group { all += batch }
         }
-        // Deduplicate by ScheduledArrival (API returns a live + a scheduled entry per trip).
-        // Normalise to UTC epoch seconds so "19:07:48Z" and "19:07:48+01:00" match.
-        // Prefer live entry when both exist.
-        let iso = ISO8601DateFormatter()
+        // Deduplicate: API returns both a live and a scheduled entry per trip.
+        // Normalise scheduled time to UTC epoch so timezone variants match.
+        // Prefer the live entry when both exist.
         func schedKey(_ a: Arrival) -> String {
-            if let date = iso.date(from: a.scheduledArrival) {
+            if let sched = a.scheduledArrival, let date = isoFormatter.date(from: sched) {
                 return "\(a.lineName ?? "")|\(Int(date.timeIntervalSince1970))"
             }
             return a.id
@@ -36,12 +31,8 @@ struct TfWMService: Sendable {
             }
         }
         let cutoff = Date().addingTimeInterval(-60)
-        func bestDate(_ a: Arrival) -> Date? {
-            if let d = iso.date(from: a.expectedArrival) { return d }
-            return iso.date(from: a.scheduledArrival)
-        }
         return byScheduled.values
-            .filter { bestDate($0).map { $0 >= cutoff } ?? false }
+            .filter { $0.arrivalDate.map { $0 >= cutoff } ?? false }
             .sorted { $0.minutesAway < $1.minutesAway }
             .prefix(3)
             .map { $0 }

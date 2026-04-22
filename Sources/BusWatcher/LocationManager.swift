@@ -35,6 +35,7 @@ final class LocationManager: NSObject {
             region.notifyOnEntry = true
             region.notifyOnExit = true
             manager.startMonitoring(for: region)
+            manager.requestState(for: region)
         }
     }
 }
@@ -50,25 +51,13 @@ extension LocationManager: CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         let identifier = region.identifier
-        let stop = watchedStops.first { $0.id == identifier }
+        let stop = watchedStopById[identifier]
         Task { @MainActor in
             if state == .inside {
                 self.nearbyStop = stop
             } else if self.nearbyStop?.id == identifier {
                 self.nearbyStop = nil
             }
-        }
-    }
-
-    nonisolated func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        let stop = watchedStops.first { $0.id == region.identifier }
-        Task { @MainActor in self.nearbyStop = stop }
-    }
-
-    nonisolated func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        let identifier = region.identifier
-        Task { @MainActor in
-            if self.nearbyStop?.id == identifier { self.nearbyStop = nil }
         }
     }
 }
