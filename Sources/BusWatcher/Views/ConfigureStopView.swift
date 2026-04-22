@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 
 struct ConfigureStopView: View {
@@ -19,6 +20,7 @@ struct ConfigureStopView: View {
     @State private var selectedNames: Set<String> = []
     @State private var label: String = ""
     @State private var color: StopColor = .blue
+    @State private var mapPosition: MapCameraPosition = .automatic
     @State private var errorMessage: String?
 
     private let service = TfWMService()
@@ -60,6 +62,14 @@ struct ConfigureStopView: View {
 
                 Section("Color") {
                     colorPicker
+                }
+
+                Section("Location") {
+                    Map(position: $mapPosition) {
+                        Marker(stopName, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
+                    }
+                    .frame(height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
 
                 if let err = errorMessage {
@@ -126,6 +136,10 @@ struct ConfigureStopView: View {
         }
         selectedNames = Set(lines.map(\.name))
         label = lines.first?.name ?? stopName
+        mapPosition = .region(MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
+            span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
+        ))
     }
 
     private func addStop() {
