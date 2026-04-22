@@ -70,6 +70,18 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Bus Watcher")
+                            .font(.largeTitle)
+                            .bold()
+                        if let updated = vm.lastUpdated {
+                            Text("Updated \(updated, style: .time)")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                     ForEach(watchedStops) { stop in
                         StopCardView(
                             stop: stop,
@@ -79,16 +91,7 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Bus Watcher")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if let updated = vm.lastUpdated {
-                        Text("Updated \(updated, style: .time)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
+            .toolbarVisibility(.hidden, for: .navigationBar)
         }
         .task {
             locationManager.setup()

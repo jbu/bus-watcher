@@ -28,7 +28,7 @@ Install and run on a booted simulator, then take a screenshot to inspect the UI:
 ```sh
 xcrun simctl boot "iPhone 17" 2>/dev/null || true
 xcrun simctl install "iPhone 17" build/Debug-iphonesimulator/BusWatcher.app
-xcrun simctl launch --terminate-running-process "iPhone 17" uk.uther.apps.buswatcher
+xcrun simctl launch --terminate-running-process "iPhone 17" uk.uther.apps.ios.buswatcher
 sleep 6
 xcrun simctl io "iPhone 17" screenshot /tmp/buswatcher.png
 ```
@@ -37,7 +37,7 @@ To test the Live Activity / geofence trigger:
 
 ```sh
 # Grant Always location permission
-xcrun simctl privacy "iPhone 17" grant location uk.uther.apps.buswatcher
+xcrun simctl privacy "iPhone 17" grant location uk.uther.apps.ios.buswatcher
 # Simulate device at St Mary's Rd stop
 xcrun simctl location "iPhone 17" set 52.455677,-1.954242
 # Background the app to see the Dynamic Island
@@ -63,7 +63,7 @@ Before building, copy `Secrets.example.swift` to `Sources/BusWatcher/Secrets.swi
 ## Architecture
 
 - **`Sources/BusWatcher/Models.swift`** — `StopConfig` (stops/lines/coordinates) and `Arrival` (API response shape). `watchedStops` is the hardcoded array of three monitored stops.
-- **`Sources/BusWatcher/TfWMService.swift`** — `async`/`await` network layer. Fetches per line in a `TaskGroup`, deduplicates, filters past arrivals (>60s ago), returns top 5.
+- **`Sources/BusWatcher/TfWMService.swift`** — `async`/`await` network layer. Fetches per line in a `TaskGroup`, deduplicates, filters past arrivals (>60s ago), returns top 3.
 - **`Sources/BusWatcher/LocationManager.swift`** — `CLLocationManager` wrapper. Registers 500m `CLCircularRegion` geofences for each stop. Sets `nearbyStop` on entry/exit and on `didDetermineState` (for the case where app launches while already inside a region).
 - **`Sources/BusWatcher/ContentView.swift`** — `BusViewModel` (`@Observable`) owns the 30-second refresh cycle and the `Activity<BusActivityAttributes>` lifecycle (start/update/end). `ContentView` wires `LocationManager.nearbyStop` changes to activity lifecycle calls.
 - **`Sources/Shared/BusActivityAttributes.swift`** — `ActivityAttributes` struct shared between the app and widget extension. Compiled into both targets.
