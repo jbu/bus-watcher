@@ -43,7 +43,7 @@ struct TfWMService: Sendable {
         return byScheduled.values
             .filter { bestDate($0).map { $0 >= cutoff } ?? false }
             .sorted { $0.minutesAway < $1.minutesAway }
-            .prefix(5)
+            .prefix(3)
             .map { $0 }
     }
 
