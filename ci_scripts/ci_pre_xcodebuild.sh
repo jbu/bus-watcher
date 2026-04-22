@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-cat > "../Sources/BusWatcher/Secrets.swift" <<EOF
+cat > "Sources/BusWatcher/Secrets.swift" <<EOF
 enum Secrets {
     static let appId  = "$TFWM_APP_ID"
     static let appKey = "$TFWM_APP_KEY"
