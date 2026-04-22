@@ -22,7 +22,7 @@ struct TfWMService: Sendable {
         let iso = ISO8601DateFormatter()
         func schedKey(_ a: Arrival) -> String {
             if let date = iso.date(from: a.scheduledArrival) {
-                return String(Int(date.timeIntervalSince1970))
+                return "\(a.lineName ?? "")|\(Int(date.timeIntervalSince1970))"
             }
             return a.id
         }
@@ -35,8 +35,13 @@ struct TfWMService: Sendable {
                 byScheduled[key] = arrival
             }
         }
+        let cutoff = Date().addingTimeInterval(-60)
+        func bestDate(_ a: Arrival) -> Date? {
+            if let d = iso.date(from: a.expectedArrival) { return d }
+            return iso.date(from: a.scheduledArrival)
+        }
         return byScheduled.values
-            .filter { $0.minutesAway >= 0 }
+            .filter { bestDate($0).map { $0 >= cutoff } ?? false }
             .sorted { $0.minutesAway < $1.minutesAway }
             .prefix(5)
             .map { $0 }
