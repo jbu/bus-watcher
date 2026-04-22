@@ -3,6 +3,7 @@ set -e
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+mkdir -p "$REPO_ROOT/Sources/BusWatcher"
 cat > "$REPO_ROOT/Sources/BusWatcher/Secrets.swift" <<EOF
 enum Secrets {
     static let appId  = "$TFWM_APP_ID"
