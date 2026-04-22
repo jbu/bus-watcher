@@ -1,5 +1,4 @@
 import SwiftUI
-@preconcurrency import ActivityKit
 
 @Observable
 @MainActor
@@ -8,7 +7,7 @@ final class BusViewModel {
     var lastUpdated: Date?
 
     private let service = TfWMService()
-    private var currentActivity: Activity<BusActivityAttributes>?
+    private let activityController: any LiveActivityManaging
     private var isRefreshing = false
 
     var starredStopIds: Set<String> = {
@@ -18,6 +17,10 @@ final class BusViewModel {
         return Set(StopStore.defaultStops.map(\.id))
     }() {
         didSet { UserDefaults.standard.set(Array(starredStopIds), forKey: "starredStops") }
+    }
+
+    init(activityController: any LiveActivityManaging = DefaultLiveActivityController()) {
+        self.activityController = activityController
     }
 
     func toggleStar(for stop: StopConfig) {
@@ -43,27 +46,31 @@ final class BusViewModel {
         lastUpdated = Date()
     }
 
+    func handleNearbyStopChanged(_ stop: StopConfig?) async {
+        if let stop, starredStopIds.contains(stop.id) {
+            await startLiveActivity(for: stop)
+        } else {
+            await endLiveActivity()
+        }
+    }
+
+    func handleStarredChanged(nearbyStop: StopConfig?) async {
+        if let stop = nearbyStop, !starredStopIds.contains(stop.id) {
+            await endLiveActivity()
+        }
+    }
+
     func startLiveActivity(for stop: StopConfig) async {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-        await endLiveActivity()
-        let state = makeState(for: stop)
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
-        currentActivity = try? Activity.request(
-            attributes: BusActivityAttributes(stopId: stop.id),
-            content: content
-        )
+        await activityController.start(stopId: stop.id, state: makeState(for: stop))
     }
 
     func updateLiveActivity(nearbyStop: StopConfig?) async {
-        guard let stop = nearbyStop, let activity = currentActivity else { return }
-        let state = makeState(for: stop)
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
-        await activity.update(content)
+        guard let stop = nearbyStop else { return }
+        await activityController.update(makeState(for: stop))
     }
 
     func endLiveActivity() async {
-        await currentActivity?.end(nil, dismissalPolicy: .immediate)
-        currentActivity = nil
+        await activityController.end()
     }
 
     private func makeState(for stop: StopConfig) -> BusActivityAttributes.ContentState {
@@ -143,22 +150,11 @@ struct ContentView: View {
         .onChange(of: store.stops.map(\.id)) { _, _ in
             locationManager.syncRegions(with: store.stops)
         }
-        .onChange(of: locationManager.nearbyStop?.id) { _, newStopId in
-            Task {
-                if let stopId = newStopId, let stop = store.stopById(stopId),
-                   vm.starredStopIds.contains(stopId) {
-                    await vm.startLiveActivity(for: stop)
-                } else {
-                    await vm.endLiveActivity()
-                }
-            }
+        .onChange(of: locationManager.nearbyStop?.id) { _, _ in
+            Task { await vm.handleNearbyStopChanged(locationManager.nearbyStop) }
         }
         .onChange(of: vm.starredStopIds) { _, _ in
-            Task {
-                if let stop = locationManager.nearbyStop, !vm.starredStopIds.contains(stop.id) {
-                    await vm.endLiveActivity()
-                }
-            }
+            Task { await vm.handleStarredChanged(nearbyStop: locationManager.nearbyStop) }
         }
     }
 }

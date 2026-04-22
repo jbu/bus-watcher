@@ -27,6 +27,10 @@ final class LocationManager: NSObject {
 
     func syncRegions(with stops: [StopConfig]) {
         currentStops = stops
+        // Always clear nearbyStop when its stop is removed, regardless of auth status.
+        if let nearby = nearbyStop, !stops.contains(where: { $0.id == nearby.id }) {
+            nearbyStop = nil
+        }
         guard manager.authorizationStatus == .authorizedAlways ||
               manager.authorizationStatus == .authorizedWhenInUse else { return }
 
@@ -49,8 +53,13 @@ final class LocationManager: NSObject {
             manager.startMonitoring(for: region)
             manager.requestState(for: region)
         }
+    }
 
-        if let nearby = nearbyStop, !targetIds.contains(nearby.id) {
+    func applyRegionState(_ state: CLRegionState, identifier: String) {
+        let stop = currentStops.first { $0.id == identifier }
+        if state == .inside {
+            nearbyStop = stop
+        } else if nearbyStop?.id == identifier {
             nearbyStop = nil
         }
     }
@@ -77,14 +86,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         let identifier = region.identifier
-        Task { @MainActor in
-            let stop = self.currentStops.first { $0.id == identifier }
-            if state == .inside {
-                self.nearbyStop = stop
-            } else if self.nearbyStop?.id == identifier {
-                self.nearbyStop = nil
-            }
-        }
+        Task { @MainActor in self.applyRegionState(state, identifier: identifier) }
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
