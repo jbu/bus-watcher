@@ -42,6 +42,7 @@ targets:
       path: Sources/BusWatcher/Info.plist
       properties:
         CFBundleIconName: AppIcon
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -86,5 +87,6 @@ targets:
       path: Sources/BusWatcherWidgets/Info.plist
       properties:
         CFBundleDisplayName: BusWatcher Widgets
+        ITSAppUsesNonExemptEncryption: false
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
